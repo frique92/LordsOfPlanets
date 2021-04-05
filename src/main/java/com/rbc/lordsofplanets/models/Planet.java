@@ -14,6 +14,10 @@ public class Planet {
     @Column
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "lord_id")
+    private Lord lord;
+
     public int getId() {
         return id;
     }

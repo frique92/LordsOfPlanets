@@ -2,6 +2,7 @@ package com.rbc.lordsofplanets.models;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "lords")
@@ -16,6 +17,9 @@ public class Lord {
 
     @Column
     private int age;
+
+    @OneToMany(mappedBy = "lord")
+    private Set<Planet> planets;
 
     public int getId() {
         return id;
