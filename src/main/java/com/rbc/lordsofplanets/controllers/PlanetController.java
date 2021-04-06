@@ -29,12 +29,12 @@ public class PlanetController {
     }
 
     @PostMapping(consumes = "application/json")
-    public Planet addLord(@RequestBody Planet planet) {
+    public Planet addPlanet(@RequestBody Planet planet) {
         return planetRepository.save(planet);
     }
 
     @GetMapping(path = "{id}")
-    public Planet getLord(@PathVariable int id) {
+    public Planet getPlanet(@PathVariable int id) {
         Optional<Planet> planets = planetRepository.findById(id);
         if (planets.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
@@ -58,7 +58,7 @@ public class PlanetController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable int id) {
+    public void deletePlanet(@PathVariable int id) {
         Optional<Planet> planet = planetRepository.findById(id);
         planet.ifPresent(value -> planetRepository.delete(value));
     }
