@@ -1,29 +1,32 @@
 package com.rbc.lordsofplanets.controllers;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.rbc.lordsofplanets.models.Lord;
 import com.rbc.lordsofplanets.models.Planet;
 import com.rbc.lordsofplanets.repositories.LordRepository;
 import com.rbc.lordsofplanets.repositories.PlanetRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.nullValue;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class PlanetControllerTest {
+
+
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,6 +61,10 @@ class PlanetControllerTest {
 
         contentAsString = mvcResult.getResponse().getContentAsString();
 
+        JsonParser jsonParser = JsonParserFactory.getJsonParser();
+        List<Object> planets = jsonParser.parseList(contentAsString);
+
+        assertEquals(planets.size(), 1);
         assertEquals(contentAsString, "[{\"id\":1,\"name\":\"Earth\",\"lord\":null}]");
 
     }
