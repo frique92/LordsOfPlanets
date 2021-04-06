@@ -7,14 +7,16 @@ import com.rbc.lordsofplanets.repositories.PlanetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("api/planets")
+@Controller
+@RequestMapping("/planets")
 public class PlanetController {
 
     @Autowired
@@ -23,10 +25,10 @@ public class PlanetController {
     @Autowired
     private LordRepository lordRepository;
 
-    @GetMapping
-    public List<Planet> getPlanets() {
-        return planetRepository.findAll();
-    }
+//    @GetMapping
+//    public List<Planet> getPlanets() {
+//        return planetRepository.findAll();
+//    }
 
     @PostMapping(consumes = "application/json")
     public Planet addPlanet(@RequestBody Planet planet) {
@@ -57,10 +59,32 @@ public class PlanetController {
         return planet;
     }
 
-    @DeleteMapping("{id}")
-    public void deletePlanet(@PathVariable int id) {
+//    @DeleteMapping("/delete/{id}")
+//    public void deletePlanet(@PathVariable int id) {
+//        Optional<Planet> planet = planetRepository.findById(id);
+//        planet.ifPresent(value -> planetRepository.delete(value));
+//    }
+
+    @GetMapping
+    public String showPlanetsList(Model model) {
+        Planet planet = new Planet();
+        model.addAttribute("planets", planetRepository.findAll());
+        model.addAttribute("planet", planet);
+//        model.addAttribute("lords", lordRepository.findAll());
+        return "planets";
+    }
+
+    @PostMapping("/add")
+    public String addProduct(@ModelAttribute(value = "planet") Planet planet) {
+        planetRepository.save(planet);
+        return "redirect:/planets";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deletePlanet(@PathVariable int id) {
         Optional<Planet> planet = planetRepository.findById(id);
         planet.ifPresent(value -> planetRepository.delete(value));
+        return "redirect:/planets";
     }
 
 }
