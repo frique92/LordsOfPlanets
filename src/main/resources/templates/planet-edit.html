@@ -12,7 +12,7 @@
 <div class="container">
     <br>
     <form th:action="@{/planets/edit}"
-          th:object="${planet}" method="post" class="row gy-2 gx-3 align-items-center">
+          th:object="${planet}" method="post" class="row gy-2 gx-3 align-items-center d-flex justify-content-center">
         <input th:field="*{id}" type="text" class="form-control" hidden>
         <div class="col-auto">
             <div class="input-group">
@@ -21,9 +21,12 @@
             </div>
         </div>
         <div class="col-auto">
-            <select th:field="*{lord}" class="form-select">
-                <option th:each="lord : ${lords}" th:value="${lord.id}" th:text="${lord.name}"></option>
-            </select>
+            <div class="input-group">
+                <div class="input-group-text">Lord</div>
+                <select th:field="*{lord}" class="form-select">
+                    <option th:each="lord : ${lords}" th:value="${lord.id}" th:text="${lord.name}"></option>
+                </select>
+            </div>
         </div>
         <div class="col-auto">
             <button type="submit" class="btn btn-primary">Edit</button>

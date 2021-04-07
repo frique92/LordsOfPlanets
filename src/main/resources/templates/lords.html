@@ -22,7 +22,7 @@
         <div class="col-auto">
             <div class="input-group">
                 <div class="input-group-text">Age</div>
-                <input th:field="*{age}" type="text" class="form-control">
+                <input th:field="*{age}" type="text" class="form-control" pattern="\d*">
             </div>
         </div>
         <div class="col-auto">
@@ -30,8 +30,8 @@
         </div>
     </form>
     <br>
-    <table class="table table-primary table-striped">
-        <thead>
+    <table class="table table-hover">
+        <thead class="table-primary">
         <tr>
             <th scope="col">#</th>
             <th scope="col">Name</th>
@@ -40,8 +40,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="lord, iStat : ${lords}" class="table-light">
-            <td th:text="${iStat.count}" scope="row"/>
+        <tr th:each="lord, iStat : ${lords}">
+            <th th:text="${iStat.count}" scope="row"/>
             <td th:text="${lord.name}"/>
             <td th:text="${lord.age}"/>
             <td>

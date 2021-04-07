@@ -12,7 +12,7 @@
 <div class="container">
     <br>
     <form th:action="@{/lords/edit}"
-          th:object="${lord}" method="post" class="row gy-2 gx-3 align-items-center">
+          th:object="${lord}" method="post" class="row gy-2 gx-3 align-items-center d-flex justify-content-center">
         <input th:field="*{id}" type="text" class="form-control" hidden>
         <div class="col-auto">
             <div class="input-group">

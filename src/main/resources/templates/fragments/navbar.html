@@ -8,7 +8,7 @@
 <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
-            <h4>🌌Lords of the planets</h4>
+            <h4>🌌Lords of planets</h4>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -18,16 +18,20 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/lords">👽Lords</a>
+                    <a class="nav-link" href="/lords"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/lords' ? 'active':''}">Lords</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/planets">🪐Planets</a>
+                    <a class="nav-link" href="/planets"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/planets' ? 'active':''}">Planets</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/lords/lazy">Lazy lords</a>
+                    <a class="nav-link" href="/lords/lazy"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/lords/lazy' ? 'active':''}">Lazy lords</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/lords/top-youngest">Top 10 youngest lords</a>
+                    <a class="nav-link" href="/lords/top-youngest"
+                       th:classappend="${#httpServletRequest.getRequestURI() == '/lords/top-youngest' ? 'active':''}">Top 10 youngest lords</a>
                 </li>
             </ul>
         </div>

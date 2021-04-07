@@ -1,8 +1,18 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<style type="text/css">
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 60px; /* Set the fixed height of the footer here */
+        line-height: 60px; /* Vertically center the text there */
+        background-color: #f5f5f5;
+    }
+</style>
 <head>
     <meta charset="utf-8"/>
-    <title>Lords of the planets
+    <title>Lords of planets
     </title>
     <th:block th:include="~{fragments/header :: header}">
     </th:block>
@@ -11,8 +21,18 @@
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 <div class="container">
-    <h1>Welcome to Lords of the planets</h1>
-</div>
+    <div style="margin-top: 30px"></div>
+    <div class="d-flex justify-content-center">
+        <h1>Welcome to Lords of planets</h1>
+    </div>
 
+</div>
+<footer class="footer">
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <span class="text-muted">Developed by Alexander Suslin</span>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

@@ -42,7 +42,7 @@ class SeleniumControllerTest {
     @Test
     public void openMainPage() throws InterruptedException {
         driver.get("http://localhost:" + serverPort);
-        assertEquals(driver.getTitle(), "Lords of the planets");
+        assertEquals(driver.getTitle(), "Lords of planets");
     }
 
     @Test
