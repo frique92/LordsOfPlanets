@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Edit lord</title>
+    <th:block th:include="~{fragments/header :: header}">
+    </th:block>
+</head>
+
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <br>
+    <form th:action="@{/lords/edit}"
+          th:object="${lord}" method="post" class="row gy-2 gx-3 align-items-center">
+        <input th:field="*{id}" type="text" class="form-control" hidden>
+        <div class="col-auto">
+            <div class="input-group">
+                <div class="input-group-text">Name</div>
+                <input th:field="*{name}" type="text" class="form-control" required>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="input-group">
+                <div class="input-group-text">Name</div>
+                <input th:field="*{age}" type="text" class="form-control" required>
+            </div>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Edit</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

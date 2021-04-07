@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Lords</title>
+    <th:block th:include="~{fragments/header :: header}">
+    </th:block>
+</head>
+
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <table class="table table-primary">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Age</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="lord, iStat : ${lords}" class="table-light">
+            <td th:text="${iStat.count}" scope="row"/>
+            <td th:text="${lord.name}"/>
+            <td th:text="${lord.age}"/>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

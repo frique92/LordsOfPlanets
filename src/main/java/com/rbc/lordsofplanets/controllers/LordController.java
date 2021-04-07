@@ -1,55 +1,21 @@
 package com.rbc.lordsofplanets.controllers;
 
 import com.rbc.lordsofplanets.models.Lord;
-import com.rbc.lordsofplanets.models.Planet;
 import com.rbc.lordsofplanets.repositories.LordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/lords")
 public class LordController {
 
-    @Autowired
-    private LordRepository lordRepository;
+    private final LordRepository lordRepository;
 
-//    @GetMapping
-//    public List<Lord> getLords() {
-//        return lordRepository.findAll();
-//    }
-
-    @PostMapping(consumes = "application/json")
-    public Lord addLord(@RequestBody Lord lord) {
-        return lordRepository.save(lord);
-    }
-
-    @GetMapping(path = "{id}")
-    public Lord getLord(@PathVariable int id) {
-        Optional<Lord> lords = lordRepository.findById(id);
-        if (lords.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        return lords.get();
-    }
-
-    @GetMapping("/topyoungest")
-    public List<Lord> getTopYoungestLords() {
-        return lordRepository.findTop10Youngest();
-    }
-
-    @GetMapping("/lazy")
-    public List<Lord> getLordsWithoutPlanets() {
-        return lordRepository.findLordsWithoutPlanets();
+    public LordController(LordRepository lordRepository) {
+        this.lordRepository = lordRepository;
     }
 
     @GetMapping
@@ -64,6 +30,39 @@ public class LordController {
     public String addProduct(@ModelAttribute(value = "planet") Lord lord) {
         lordRepository.save(lord);
         return "redirect:/lords";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditLord(Model model, @PathVariable(value = "id") int id) {
+        model.addAttribute("lord", lordRepository.findById(id));
+        return "lord-edit";
+    }
+
+    @PostMapping("/edit")
+    public String editLord(@ModelAttribute(value = "lord") Lord lord) {
+        lordRepository.save(lord);
+        return "redirect:/lords";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteLord(@PathVariable int id) {
+        Optional<Lord> lord = lordRepository.findById(id);
+        lord.ifPresent(lordRepository::delete);
+        return "redirect:/lords";
+    }
+
+    @GetMapping("/lazy")
+    public String showLordsWithoutPlanets(Model model) {
+        model.addAttribute("lords", lordRepository.findLordsWithoutPlanets());
+        model.addAttribute("pageTitle", "Lazy lords");
+        return "filter-lords";
+    }
+
+    @GetMapping("/top-youngest")
+    public String showTopYoungestLords(Model model) {
+        model.addAttribute("lords", lordRepository.findTop10Youngest());
+        model.addAttribute("pageTitle", "Top 10 youngest lords");
+        return "filter-lords";
     }
 
 }
