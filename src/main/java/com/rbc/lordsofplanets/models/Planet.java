@@ -7,6 +7,15 @@ import java.util.Objects;
 @Table(name = "planets")
 public class Planet {
 
+    public Planet() {
+    }
+
+    public Planet(int id, String name, Lord lord) {
+        this.id = id;
+        this.name = name;
+        this.lord = lord;
+    }
+
     @Id
     @GeneratedValue
     private int id;
