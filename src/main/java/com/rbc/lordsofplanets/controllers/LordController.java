@@ -2,6 +2,7 @@ package com.rbc.lordsofplanets.controllers;
 
 import com.rbc.lordsofplanets.models.Lord;
 import com.rbc.lordsofplanets.repositories.LordRepository;
+import com.rbc.lordsofplanets.repositories.PlanetRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +15,11 @@ public class LordController {
 
     private final LordRepository lordRepository;
 
-    public LordController(LordRepository lordRepository) {
+    private final PlanetRepository planetRepository;
+
+    public LordController(LordRepository lordRepository, PlanetRepository planetRepository) {
         this.lordRepository = lordRepository;
+        this.planetRepository = planetRepository;
     }
 
     @GetMapping
@@ -47,7 +51,14 @@ public class LordController {
     @GetMapping("/delete/{id}")
     public String deleteLord(@PathVariable int id) {
         Optional<Lord> lord = lordRepository.findById(id);
-        lord.ifPresent(lordRepository::delete);
+        if (lord.isPresent()) {
+            lord.get().getPlanets()
+                    .forEach(planet -> {
+                        planet.setLord(null);
+                        planetRepository.save(planet);
+                    });
+            lordRepository.delete(lord.get());
+        }
         return "redirect:/lords";
     }
 

@@ -1,7 +1,9 @@
 package com.rbc.lordsofplanets.models;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "lords")
@@ -15,6 +17,17 @@ public class Lord {
         this.name = name;
         this.age = age;
     }
+
+    public Set<Planet> getPlanets() {
+        return planets;
+    }
+
+    public void setPlanets(Set<Planet> planets) {
+        this.planets = planets;
+    }
+
+    @OneToMany(mappedBy = "lord")
+    Set<Planet> planets;
 
     @Id
     @GeneratedValue
