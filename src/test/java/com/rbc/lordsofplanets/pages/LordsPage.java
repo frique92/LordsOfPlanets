@@ -1,9 +1,6 @@
 package com.rbc.lordsofplanets.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
@@ -64,18 +61,20 @@ public class LordsPage {
     public void clickOnEditLord(int idRow) {
         try {
             bodyList.findElement(By.xpath("tr[" + idRow + "]/td[3]/a[1]")).click();
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
+        } catch (WebDriverException e) {
+            JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("arguments[0].click()",
+                    bodyList.findElement(By.xpath("tr[" + idRow + "]/td[3]/a[1]")));
         }
-
     }
 
     public void clickOnDeleteLord(int idRow) {
         try {
             bodyList.findElement(By.xpath("tr[" + idRow + "]/td[3]/a[2]")).click();
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
+        } catch (WebDriverException e) {
+            JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("arguments[0].click()",
+                    bodyList.findElement(By.xpath("tr[" + idRow + "]/td[3]/a[2]")));
         }
-
     }
 }

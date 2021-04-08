@@ -73,9 +73,11 @@ class SeleniumControllerTest {
         lordsPage.setLordData("Dart Vader", 30);
         lordsPage.clickOnAddLord();
 
-        assertEquals(countLordsBeforeAdding + 1, lordsPage.getListLords().size());
+        int countLordsAfterAdding = countLordsBeforeAdding + 1;
 
-        lordsPage.clickOnDeleteLord(countLordsBeforeAdding + 1);
+        assertEquals(countLordsAfterAdding, lordsPage.getListLords().size());
+
+        lordsPage.clickOnDeleteLord(countLordsAfterAdding);
 
         assertEquals(countLordsBeforeAdding, lordsPage.getListLords().size());
 
@@ -184,12 +186,13 @@ class SeleniumControllerTest {
         planetsPage.setPlanetName("Earth");
         planetsPage.clickOnAddPlanet();
 
-        assertEquals(countLordsBeforeAdding + 1, planetsPage.getListPlanets().size());
+        int countPlanetsAfterAdding = countLordsBeforeAdding + 1;
 
-        planetsPage.clickOnDeletePlanet(countLordsBeforeAdding + 1);
+        assertEquals(countPlanetsAfterAdding, planetsPage.getListPlanets().size());
+
+        planetsPage.clickOnDeletePlanet(countPlanetsAfterAdding);
 
         assertEquals(countLordsBeforeAdding, planetsPage.getListPlanets().size());
-
     }
 
     @Test
