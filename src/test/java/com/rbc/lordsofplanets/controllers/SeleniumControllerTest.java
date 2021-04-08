@@ -1,20 +1,17 @@
 package com.rbc.lordsofplanets.controllers;
 
+import com.rbc.lordsofplanets.pages.LordsPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.FindBy;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,6 +23,18 @@ class SeleniumControllerTest {
 
     @LocalServerPort
     protected int serverPort;
+
+    private String getTextActiveLinkNavbar(WebDriver driver) {
+        String textActiveLink;
+        try {
+            textActiveLink = driver.findElement(By.xpath("//a[contains(@class, 'nav-link active')]"))
+                    .getAttribute("textContent");
+        } catch (NoSuchElementException e) {
+            textActiveLink = "";
+        }
+
+        return textActiveLink;
+    }
 
     @BeforeAll
     public void initDriver() {
@@ -40,32 +49,31 @@ class SeleniumControllerTest {
     }
 
     @Test
-    public void openMainPage() throws InterruptedException {
-        driver.get("http://localhost:" + serverPort);
-        assertEquals(driver.getTitle(), "Lords of planets");
+    public void openMainPage() {
+        String mainURL = "http://localhost:" + serverPort;
+
+        driver.get(mainURL);
+        assertEquals("", getTextActiveLinkNavbar(driver));
     }
 
     @Test
     public void openLordsPage() {
-        driver.get("http://localhost:" + serverPort + "/lords");
-        assertEquals(driver.getTitle(), "Lords");
+        String mainURL = "http://localhost:" + serverPort;
 
-        WebElement nameLord = driver.findElement(By.id("name"));
-        nameLord.sendKeys("Putin");
+        LordsPage lordsPage = new LordsPage(driver);
 
-        WebElement ageLord = driver.findElement(By.id("age"));
-        nameLord.sendKeys("30");
+        driver.get(mainURL + lordsPage.PAGE_URL);
+        assertEquals("Lords", getTextActiveLinkNavbar(driver));
 
-        driver.findElement(By.className("btn")).click();
+        lordsPage.setLordData("Dart Vader", 30);
+        lordsPage.clickOnAddLord();
 
-        WebElement tbody = driver.findElement(By.tagName("tbody"));
-        List<WebElement> listLords = tbody.findElements(By.tagName("tr"));
-        assertEquals(1, listLords.size());
+        assertEquals(1, lordsPage.getListLords().size());
 
-        driver.findElement(By.xpath("//a[@href ='/lords/delete/1']")).click();
-        tbody = driver.findElement(By.tagName("tbody"));
-        listLords = tbody.findElements(By.tagName("tr"));
-        assertEquals(0, listLords.size());
+        lordsPage.clickOnDeleteLord(1);
+
+        assertEquals(0, lordsPage.getListLords().size());
+
     }
 
 }
