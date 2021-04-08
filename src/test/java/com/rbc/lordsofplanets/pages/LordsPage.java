@@ -61,6 +61,15 @@ public class LordsPage {
         return arrLords;
     }
 
+    public void clickOnEditLord(int idRow) {
+        try {
+            bodyList.findElement(By.xpath("tr[" + idRow + "]/td[3]/a[1]")).click();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void clickOnDeleteLord(int idRow) {
         try {
             bodyList.findElement(By.xpath("tr[" + idRow + "]/td[3]/a[2]")).click();

@@ -1,5 +1,6 @@
 package com.rbc.lordsofplanets.controllers;
 
+import com.rbc.lordsofplanets.pages.LordEditPage;
 import com.rbc.lordsofplanets.pages.LordsPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterAll;
@@ -76,4 +77,32 @@ class SeleniumControllerTest {
 
     }
 
+    @Test
+    void openLordEditPage() {
+        String mainURL = "http://localhost:" + serverPort;
+
+        LordsPage lordsPage = new LordsPage(driver);
+        LordEditPage lordEditPage = new LordEditPage(driver);
+
+        String lordName = "Dart Vader";
+        String newLordName = "John";
+
+        driver.get(mainURL + lordsPage.PAGE_URL);
+        assertEquals("Lords", getTextActiveLinkNavbar(driver));
+
+        lordsPage.setLordData(lordName, 30);
+        lordsPage.clickOnAddLord();
+
+        assertEquals(1, lordsPage.getListLords().size());
+
+        lordsPage.clickOnEditLord(1);
+        assertEquals("Edit lord", driver.getTitle());
+
+        lordEditPage.setLordName(newLordName);
+        lordEditPage.clickOnEditLord();
+
+        assertEquals(1, lordsPage.getListLords().size());
+        assertEquals(newLordName, lordsPage.getListLords().get(0).get("name"));
+
+    }
 }
