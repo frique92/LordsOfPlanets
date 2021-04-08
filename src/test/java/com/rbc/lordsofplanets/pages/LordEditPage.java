@@ -30,6 +30,7 @@ public class LordEditPage {
     }
 
     public void setLordName(String name) {
+        lordName.clear();
         lordName.sendKeys(name);
     }
 
