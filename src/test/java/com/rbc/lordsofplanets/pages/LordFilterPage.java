@@ -1,7 +1,6 @@
 package com.rbc.lordsofplanets.pages;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -23,7 +22,7 @@ public class LordFilterPage {
         PageFactory.initElements(driver, this);
     }
 
-    public List<Map<String, String>>  getListLords() {
+    public List<Map<String, String>> getListLords() {
         List<Map<String, String>> arrLords = new ArrayList<>();
         List<String> columnsTable = new ArrayList<>(List.of("name", "age"));
 

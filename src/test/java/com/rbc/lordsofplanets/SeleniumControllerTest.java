@@ -1,4 +1,4 @@
-package com.rbc.lordsofplanets.controllers;
+package com.rbc.lordsofplanets;
 
 import com.rbc.lordsofplanets.pages.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -13,8 +13,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
-import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,7 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SeleniumControllerTest {
 
-    private WebDriver driver;
+    private static final String MAIN_URL = "http://localhost:";
+
+    private static WebDriver driver;
+    private static MainPage mainPage;
+    private static LordsPage lordsPage;
+    private static LordFilterPage lordFilterPage;
+    private static LordEditPage lordEditPage;
+    private static PlanetsPage planetsPage;
+    private static PlanetEditPage planetEditPage;
 
     @LocalServerPort
     protected int serverPort;
@@ -40,9 +46,18 @@ class SeleniumControllerTest {
     }
 
     @BeforeAll
-    public void initDriver() {
+    public void init() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+
+        driver.manage().window().maximize();
+
+        mainPage = new MainPage(driver);
+        lordsPage = new LordsPage(driver);
+        lordFilterPage = new LordFilterPage(driver);
+        lordEditPage = new LordEditPage(driver);
+        planetsPage = new PlanetsPage(driver);
+        planetEditPage = new PlanetEditPage(driver);
     }
 
     @AfterAll
@@ -53,57 +68,40 @@ class SeleniumControllerTest {
 
     @Test
     public void openMainPage() {
-        String mainURL = "http://localhost:" + serverPort;
-
-        driver.get(mainURL);
-        assertEquals("", getTextActiveLinkNavbar(driver));
+        driver.get(MAIN_URL + serverPort + mainPage.PAGE_URL);
+        assertEquals("Lords of planets", driver.getTitle());
     }
 
     @Test
     public void openLordsPageAddNewLordAndDeleteHim() {
-        String mainURL = "http://localhost:" + serverPort;
-
-        LordsPage lordsPage = new LordsPage(driver);
-
-        driver.get(mainURL + lordsPage.PAGE_URL);
+        driver.get(MAIN_URL + serverPort + lordsPage.PAGE_URL);
         assertEquals("Lords", getTextActiveLinkNavbar(driver));
 
-        int countLordsBeforeAdding = lordsPage.getListLords().size();
-
+        int countLordsBefore = lordsPage.getListLords().size();
         lordsPage.setLordData("Dart Vader", 30);
         lordsPage.clickOnAddLord();
+        int countLordsAfter = countLordsBefore + 1;
+        assertEquals(countLordsAfter, lordsPage.getListLords().size());
 
-        int countLordsAfterAdding = countLordsBeforeAdding + 1;
-
-        assertEquals(countLordsAfterAdding, lordsPage.getListLords().size());
-
-        lordsPage.clickOnDeleteLord(countLordsAfterAdding);
-
-        assertEquals(countLordsBeforeAdding, lordsPage.getListLords().size());
-
+        lordsPage.clickOnDeleteLord(countLordsAfter);
+        assertEquals(countLordsBefore, lordsPage.getListLords().size());
     }
 
     @Test
     void openLordsPageAddNewLordAndEditHim() {
-        String mainURL = "http://localhost:" + serverPort;
-
-        LordsPage lordsPage = new LordsPage(driver);
-        LordEditPage lordEditPage = new LordEditPage(driver);
-
         String lordName = "Dart Vader";
         String newLordName = "John";
 
-        driver.get(mainURL + lordsPage.PAGE_URL);
+        driver.get(MAIN_URL + serverPort + lordsPage.PAGE_URL);
         assertEquals("Lords", getTextActiveLinkNavbar(driver));
 
-        int countLordsBeforeAdding = lordsPage.getListLords().size();
-
+        int countLordsBefore = lordsPage.getListLords().size();
         lordsPage.setLordData(lordName, 30);
         lordsPage.clickOnAddLord();
+        int countLordsAfter = countLordsBefore + 1;
+        assertEquals(countLordsAfter, lordsPage.getListLords().size());
 
-        assertEquals(countLordsBeforeAdding + 1, lordsPage.getListLords().size());
-
-        lordsPage.clickOnEditLord(countLordsBeforeAdding + 1);
+        lordsPage.clickOnEditLord(countLordsAfter);
         assertEquals("Edit lord", driver.getTitle());
 
         lordEditPage.setLordName(newLordName);
@@ -111,130 +109,85 @@ class SeleniumControllerTest {
 
         assertEquals("Lords", getTextActiveLinkNavbar(driver));
         assertEquals(newLordName, lordsPage.getListLords()
-                .get(countLordsBeforeAdding).get("name"));
-
+                .get(countLordsAfter - 1).get("name"));
     }
 
     @Test
     void openLazyLordsPage() {
-        String mainURL = "http://localhost:" + serverPort;
-
-        LordsPage lordsPage = new LordsPage(driver);
-        LordFilterPage lordFilterPage = new LordFilterPage(driver);
-
-        //add lord
-        driver.get(mainURL + lordsPage.PAGE_URL);
+        driver.get(MAIN_URL + serverPort + lordsPage.PAGE_URL);
         assertEquals("Lords", getTextActiveLinkNavbar(driver));
 
-        int countLordsBeforeAdding = lordsPage.getListLords().size();
-
+        int countLordsBefore = lordsPage.getListLords().size();
         lordsPage.setLordData("testLord-1", 30);
         lordsPage.clickOnAddLord();
+        assertEquals(countLordsBefore + 1, lordsPage.getListLords().size());
 
-        assertEquals(countLordsBeforeAdding + 1, lordsPage.getListLords().size());
-
-        driver.get(mainURL + "/lords/lazy");
+        driver.get(MAIN_URL + serverPort + "/lords/lazy");
         assertEquals("Lazy lords", getTextActiveLinkNavbar(driver));
-
         assertTrue(lordFilterPage.getListLords().size() > 0);
-
     }
 
     @Test
     void openTop10YoungestLordsPage() {
-        String mainURL = "http://localhost:" + serverPort;
-
-        LordsPage lordsPage = new LordsPage(driver);
-        LordFilterPage lordFilterPage = new LordFilterPage(driver);
-
-        //add 11 lords
-        driver.get(mainURL + lordsPage.PAGE_URL);
+        driver.get(MAIN_URL + serverPort + lordsPage.PAGE_URL);
         assertEquals("Lords", getTextActiveLinkNavbar(driver));
 
         int countLordsBeforeAdding = lordsPage.getListLords().size();
         int countLords = 11;
-
         for (int i = 0; i < countLords; i++) {
             lordsPage.setLordData("testLord-" + (i + 1), i);
             lordsPage.clickOnAddLord();
         }
-
         assertEquals(countLordsBeforeAdding + countLords, lordsPage.getListLords().size());
 
 
-
-        driver.get(mainURL + "/lords/top-youngest");
+        driver.get(MAIN_URL + serverPort + "/lords/top-youngest");
         assertEquals("Top 10 youngest lords", getTextActiveLinkNavbar(driver));
-
         assertTrue(lordFilterPage.getListLords().size() <= 10);
-
         assertTrue(lordsPage.getListLords().stream().noneMatch(el -> el.get("name").equals("testLord-11")));
-
     }
 
     @Test
     public void openPlanetsPageAddNewPlanetAndDeleteHer() {
-        String mainURL = "http://localhost:" + serverPort;
-
-        PlanetsPage planetsPage = new PlanetsPage(driver);
-
-        driver.get(mainURL + planetsPage.PAGE_URL);
+        driver.get(MAIN_URL + serverPort + planetsPage.PAGE_URL);
         assertEquals("Planets", getTextActiveLinkNavbar(driver));
 
-        int countLordsBeforeAdding = planetsPage.getListPlanets().size();
-
+        int countLordsBefore = planetsPage.getListPlanets().size();
         planetsPage.setPlanetName("Earth");
         planetsPage.clickOnAddPlanet();
+        int countPlanetsAfter = countLordsBefore + 1;
+        assertEquals(countPlanetsAfter, planetsPage.getListPlanets().size());
 
-        int countPlanetsAfterAdding = countLordsBeforeAdding + 1;
-
-        assertEquals(countPlanetsAfterAdding, planetsPage.getListPlanets().size());
-
-        planetsPage.clickOnDeletePlanet(countPlanetsAfterAdding);
-
-        assertEquals(countLordsBeforeAdding, planetsPage.getListPlanets().size());
+        planetsPage.clickOnDeletePlanet(countPlanetsAfter);
+        assertEquals(countLordsBefore, planetsPage.getListPlanets().size());
     }
 
     @Test
     void openPlanetsPageAddNewPlanetAndEditHer() {
-        String mainURL = "http://localhost:" + serverPort;
-
-        LordsPage lordsPage = new LordsPage(driver);
-        PlanetsPage planetsPage = new PlanetsPage(driver);
-        PlanetEditPage planetEditPage = new PlanetEditPage(driver);
-
         String planetName = "Mercury-1";
         String newPlanetName = "Mercury";
         String lordName = "LordOfMercury";
 
-        //add new lord
-        driver.get(mainURL + lordsPage.PAGE_URL);
+        driver.get(MAIN_URL + serverPort + lordsPage.PAGE_URL);
         assertEquals("Lords", getTextActiveLinkNavbar(driver));
 
-        int countLordsBeforeAdding = lordsPage.getListLords().size();
-
+        int countLordsBefore = lordsPage.getListLords().size();
         lordsPage.setLordData("testLord", 30);
         lordsPage.clickOnAddLord();
 
-        assertEquals(countLordsBeforeAdding + 1, lordsPage.getListLords().size());
-
-        lordsPage.setLordData(lordName, 30);
+        lordsPage.setLordData(lordName, 20);
         lordsPage.clickOnAddLord();
+        assertEquals(countLordsBefore + 2, lordsPage.getListLords().size());
 
-
-        //add new planet
-        driver.get(mainURL + planetsPage.PAGE_URL);
+        driver.get(MAIN_URL + serverPort + planetsPage.PAGE_URL);
         assertEquals("Planets", getTextActiveLinkNavbar(driver));
 
-        int countPlanetsBeforeAdding = planetsPage.getListPlanets().size();
-
+        int countPlanetsBefore = planetsPage.getListPlanets().size();
         planetsPage.setPlanetName(planetName);
         planetsPage.clickOnAddPlanet();
+        assertEquals(countPlanetsBefore + 1, planetsPage.getListPlanets().size());
 
-        assertEquals(countPlanetsBeforeAdding + 1, planetsPage.getListPlanets().size());
-
-        //edit added planet
-        planetsPage.clickOnEditPlanet(countPlanetsBeforeAdding + 1);
+        planetsPage.clickOnEditPlanet(countPlanetsBefore + 1);
         assertEquals("Edit planet", driver.getTitle());
 
         planetEditPage.setPlanetName(newPlanetName);
@@ -243,10 +196,9 @@ class SeleniumControllerTest {
 
         assertEquals("Planets", getTextActiveLinkNavbar(driver));
         assertEquals(newPlanetName, planetsPage.getListPlanets()
-                .get(countPlanetsBeforeAdding).get("name"));
+                .get(countPlanetsBefore).get("name"));
         assertEquals(lordName, planetsPage.getListPlanets()
-                .get(countPlanetsBeforeAdding).get("lord"));
-
+                .get(countPlanetsBefore).get("lord"));
     }
 
 }

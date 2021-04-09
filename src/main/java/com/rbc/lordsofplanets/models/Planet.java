@@ -56,11 +56,11 @@ public class Planet {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Planet planet = (Planet) o;
-        return id == planet.id && Objects.equals(name, planet.name);
+        return id == planet.id && name.equals(planet.name) && Objects.equals(lord, planet.lord);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, lord);
     }
 }

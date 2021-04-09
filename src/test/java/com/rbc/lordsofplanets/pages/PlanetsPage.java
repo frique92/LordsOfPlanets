@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 public class PlanetsPage {
-    private WebDriver driver;
-
     public final String PAGE_URL = "/planets";
+
+    private WebDriver driver;
 
     @FindBy(id = "name")
     private WebElement planetName;
@@ -36,7 +36,7 @@ public class PlanetsPage {
         buttonAddPlanet.click();
     }
 
-    public List<Map<String, String>>  getListPlanets() {
+    public List<Map<String, String>> getListPlanets() {
         List<Map<String, String>> arrLords = new ArrayList<>();
         List<String> columnsTable = new ArrayList<>(List.of("name", "lord"));
 

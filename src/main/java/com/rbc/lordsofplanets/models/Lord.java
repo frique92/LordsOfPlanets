@@ -1,7 +1,6 @@
 package com.rbc.lordsofplanets.models;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,17 +17,6 @@ public class Lord {
         this.age = age;
     }
 
-    public Set<Planet> getPlanets() {
-        return planets;
-    }
-
-    public void setPlanets(Set<Planet> planets) {
-        this.planets = planets;
-    }
-
-    @OneToMany(mappedBy = "lord")
-    Set<Planet> planets;
-
     @Id
     @GeneratedValue
     private int id;
@@ -38,6 +26,9 @@ public class Lord {
 
     @Column
     private int age;
+
+    @OneToMany(mappedBy = "lord")
+    Set<Planet> planets;
 
     public int getId() {
         return id;
@@ -63,16 +54,24 @@ public class Lord {
         this.age = age;
     }
 
+    public Set<Planet> getPlanets() {
+        return planets;
+    }
+
+    public void setPlanets(Set<Planet> planets) {
+        this.planets = planets;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Lord lord = (Lord) o;
-        return id == lord.id && age == lord.age && Objects.equals(name, lord.name);
+        return id == lord.id && age == lord.age && name.equals(lord.name) && Objects.equals(planets, lord.planets);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age);
+        return Objects.hash(id, name, age, planets);
     }
 }
